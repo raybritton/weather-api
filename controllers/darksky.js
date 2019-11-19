@@ -76,8 +76,10 @@ function update(key) {
                     yesterday: {},
                     prediction: formatPredication(weatherData.hourly)
                 };
+                cache[key].lastUpdated = now;
             } else {
                 cache[key].prediction = formatPredication(weatherData.hourly);
+                cache[key].lastUpdated = now;
             }
         }
     });
@@ -85,21 +87,20 @@ function update(key) {
 
 function formatPredication(hourly) {
     const now = new Date();
-    now.setDate(now.getDate() + 1);
     const year = now.getFullYear();
     const day = dayOfYear(now);
     return hourly.data
         .filter((data) => {
-            const date = new Date(data.time);
+            const date = new Date(data.time * 1000);
             return date.getFullYear() == year && dayOfYear(date) == day;
         })
         .map((data) => {
-            const date = new Date(data.time);
+            const date = new Date(data.time * 1000);
             return {
                 hour: date.getHours(),
                 temp: Math.round(data.temperature),
                 icon: data.icon,
-                rain: data.precipIntensity > 0 && precipProbability > 0
+                rain: data.precipIntensity > 0 && data.precipProbability > 0
             };
         });
 }
@@ -136,7 +137,8 @@ db.getKeys((err, keys) => {
                 } else {
                     cache[key] = {
                         yesterday: yesterday,
-                        prediction: []
+                        prediction: [],
+                        lastUpdated: null
                     };
                 }
             });
