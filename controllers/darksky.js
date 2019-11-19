@@ -70,7 +70,7 @@ function update(key) {
             const day = dayOfYear(now);
             const hour = now.getHours();
             const weatherData = JSON.parse(body);
-            db.insertRecord(key, year, day, hour, round(weatherData.currently.temperature), weatherData.currently.icon, weatherData.currently.precipIntensity > 0)
+            db.insertRecord(key, year, day, hour, Math.round(weatherData.currently.temperature), weatherData.currently.icon, weatherData.currently.precipIntensity > 0)
             if (cache[key] == undefined) {
                 cache[key] = {
                     yesterday: {},
@@ -97,7 +97,7 @@ function formatPredication(hourly) {
             const date = new Date(data.time);
             return {
                 hour: date.getHours(),
-                temp: round(data.temperature),
+                temp: Math.round(data.temperature),
                 icon: data.icon,
                 rain: data.precipIntensity > 0 && precipProbability > 0
             };
