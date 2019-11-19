@@ -8,8 +8,13 @@ const MAX_LOCATIONS = parseInt(process.env.MAX_LOCATIONS);
 var toMonitor = [];
 var cache = {};
 
-module.exports.getForLatLng = function (lat, lng) {
-    const key = makeKey(lat, lng);
+module.exports.getForLatLng = function (lat, lng, v2) {
+    var key 
+    if (v2) {
+        key = makeKeyV2(lat, lng);
+    } else {
+        key = makeKey(lat, lng);
+    }
 
     if (cache[key] == undefined || cache[key].yesterday.length < 24) {
         if (toMonitor.length + cache.length > MAX_LOCATIONS) {
@@ -23,12 +28,29 @@ module.exports.getForLatLng = function (lat, lng) {
 }
 
 function makeKey(lat, lng) {
-    return `${trimToWholeNumber(lat)},${trimToWholeNumber(lng)}`; 
+    return `${trimTo100Km(lat)},${trimTo100Km(lng)}`; 
 }
 
-function trimToWholeNumber(str) {
+function makeKeyV2(lat, lng) {
+    return `${trimTo10Km(lat)},${trimTo10Km(lng)}`; 
+}
+
+function trimTo100Km(str) {
     const idx = str.indexOf('.');
-    return str.substr(0, idx);
+    if (idx > 0) {
+        return str.substr(0, idx);
+    } else {
+        return str;
+    }
+}
+
+function trimTo10Km(str) {
+    const idx = str.indexOf('.');
+    if (idx > 0) {
+        return str.substr(0, idx + 2); 
+    } else {
+        return str;
+    }
 }
 
 function updateData() {
@@ -48,7 +70,7 @@ function update(key) {
             const day = dayOfYear(now);
             const hour = now.getHours();
             const weatherData = JSON.parse(body);
-            db.insertRecord(key, year, day, hour, parseInt(weatherData.currently.temperature), weatherData.currently.icon, weatherData.currently.precipIntensity > 0)
+            db.insertRecord(key, year, day, hour, round(weatherData.currently.temperature), weatherData.currently.icon, weatherData.currently.precipIntensity > 0)
             if (cache[key] == undefined) {
                 cache[key] = {
                     yesterday: {},
@@ -75,7 +97,7 @@ function formatPredication(hourly) {
             const date = new Date(data.time);
             return {
                 hour: date.getHours(),
-                temp: parseInt(data.temperature),
+                temp: round(data.temperature),
                 icon: data.icon,
                 rain: data.precipIntensity > 0 && precipProbability > 0
             };

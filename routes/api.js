@@ -21,11 +21,11 @@ router.get("/reload", (req, res) => {
   }
 });
 
-router.get('/weather/:lat/:lng', validateApikey, (req, res) => {
+router.get('/:version/weather/:lat/:lng', validateApikey, (req, res) => {
   const lat = req.params.lat;
   const lng = req.params.lng;
 
-  const data = darksky.getForLatLng(lat, lng);
+  const data = darksky.getForLatLng(lat, lng, req.params.version == "v2");
   if (typeof data == "string") {
     res.status(200).send({
       message: data
