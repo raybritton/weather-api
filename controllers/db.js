@@ -23,26 +23,16 @@ const DB = new sqlite.Database(DB_FILE, (err) => {
   });
 });
 
-module.exports.insertRecord = function(key, year, day, hour, temp, icon, raining) {
-  DB.run("REPLACE INTO weather (key, year, day, hour, temp, icon, rain) VALUES (?,?,?,?,?,?,?)", [key, year, day, hour, temp, icon, raining], (err) => {
+module.exports.insertRecord = function(year, day, hour, data) {
+  DB.run("REPLACE INTO weather (year, day, hour, temp, icon, rain, windSpeed) VALUES (?,?,?,?,?,?,?)", [year, day, hour, data.temp, data.icon, data.rain, data.windSpeed], (err) => {
     if (err) {
-      console.log(`Error writing (${key}, ${year}, ${day}, ${hour}, ${temp}, ${icon}, ${raining}): ${err}`);
+      console.log(`Error writing (${year}, ${day}, ${hour}, ${data.temp}, ${data.icon}, ${data.rain}, ${data.windSpeed}): ${err}`);
     }
   });
-}
+};
 
-module.exports.getKeys = function(callback) {
-  DB.all("SELECT DISTINCT key FROM weather", (err, rows) => {
-    if (err) {
-      callback(err);
-    } else {
-      callback(null, rows.map((row) => row.key));
-    }
-  });
-}
-
-module.exports.getDay = function(key, year, day, callback) {
-  DB.all("SELECT * FROM weather WHERE key = ? AND year = ? AND day = ?", [key, year, day], (err, rows) => {
+module.exports.getDay = function(year, day, callback) {
+  DB.all("SELECT * FROM weather WHERE year = ? AND day = ?", [year, day], (err, rows) => {
     if (err) {
       callback(err);
     } else {
@@ -51,9 +41,10 @@ module.exports.getDay = function(key, year, day, callback) {
           hour: row.hour,
           temp: row.temp,
           icon: row.icon,
-          rain: row.rain == 1
+          rain: row.rain == 1,
+          windSpeed: row.windSpeed
         };
       }));
     }
   });
-}
+};
