@@ -9,14 +9,16 @@ const LAT = process.env.LATITUDE;
 const LNG = process.env.LONGITUDE;
 
 var cache = [];
-var todaysCache = [];
+var todaysCache = {};
 var today = {};
+var lastUpdated = null;
 
 module.exports.getForLatLng = function () {
     return {
         yesterday: cache,
         todayHistory: todaysCache,
-        todayPrediction: today
+        todayPrediction: today,
+        lastUpdated: lastUpdated
     };
 }
 
@@ -31,9 +33,9 @@ function update(key) {
             console.error(err);
         } else {
             const now = new Date();
-            const year = now.getFullYear();
+            const year = now.getUTCFullYear();
             const day = dayOfYear(now);
-            const hour = now.getHours();
+            const hour = now.getUTCHours();
             const weatherData = JSON.parse(body);
             fs.writeFile(`${JSON_DIR}/${makeFileName(now)}`, body, () => { });
             const data = {
@@ -45,8 +47,8 @@ function update(key) {
             };
             db.insertRecord(year, day, hour, data);
             today.data = formatPredication(weatherData.hourly);
-            today.lastUpdated = now;
-            todaysCache.push(data);
+            lastUpdated = now;
+            todaysCache[hour] = (data);
             if (hour >= 23) {
                 cache = todaysCache;
                 todaysCache = [];
@@ -56,22 +58,22 @@ function update(key) {
 }
 
 function makeFileName(date) {
-    return `${date.getFullYear()}_${date.getMonth()}_${date.getDate()}_${date.getHours()}.json`
+    return `${date.getUTCFullYear()}_${date.getUTCMonth()}_${date.getUTCDate()}_${date.getUTCHours()}.json`
 }
 
 function formatPredication(hourly) {
     const now = new Date();
-    const year = now.getFullYear();
+    const year = now.getUTCFullYear();
     const day = dayOfYear(now);
     return hourly.data
         .filter((data) => {
             const date = new Date(data.time * 1000);
-            return date.getFullYear() == year && dayOfYear(date) == day;
+            return date.getUTCFullYear() == year && dayOfYear(date) == day;
         })
         .map((data) => {
             const date = new Date(data.time * 1000);
             return {
-                hour: date.getHours(),
+                hour: date.getUTCHours(),
                 temp: Math.round(data.temperature),
                 icon: data.icon,
                 rainIntensity: data.precipIntensity,
@@ -81,23 +83,38 @@ function formatPredication(hourly) {
 }
 
 function dayOfYear(target) {
-    const start = new Date(target.getFullYear(), 0, 0);
+    const start = new Date(target.getUTCFullYear(), 0, 0);
     const diff = (target - start) + ((start.getTimezoneOffset() - target.getTimezoneOffset()) * 60 * 1000);
     const oneDay = 1000 * 60 * 60 * 24;
     return Math.floor(diff / oneDay);
 }
 
 function loadCache() {
-    const now = new Date();
-    now.setDate(now.getDate() - 1);
-    const year = now.getFullYear();
-    const day = dayOfYear(now);
-    db.getDay(year, day, (err, yesterday) => {
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    var year = yesterday.getUTCFullYear();
+    var day = dayOfYear(yesterday);
+    db.getDay(year, day, (err, yesterdayData) => {
         if (err) {
             console.log("Failed to read yesterday");
             console.error(err);
         } else {
-            cache = yesterday;
+            cache = yesterdayData;
+        }
+    });
+
+    var now = new Date();
+    var year = now.getUTCFullYear();
+    var day = dayOfYear(now);
+    db.getDay(year, day, (err, todayData) => {
+        if (err) {
+            console.log("Failed to read today");
+            console.error(err);
+        } else {
+            todaysData = {};
+            todayData.forEach((datum) => {
+                todaysData[datum.hour] = datum;
+            });
         }
     });
 }
@@ -105,9 +122,9 @@ function loadCache() {
 function msToNextHour() {
     const now = new Date();
     var target = new Date();
-    target.setMinutes(1);
-    target.setHours(target.getHours() + 1);
-    return target.getTime() - now.getTime();
+    target.setUTCMinutes(1);
+    target.setUTCHours(target.getUTCHours() + 1);
+    return target.getUTCMilliseconds() - now.getUTCMilliseconds();
 }
 
 loadCache();
