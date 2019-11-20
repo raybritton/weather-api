@@ -102,6 +102,14 @@ function loadCache() {
     });
 }
 
+function msToNextHour() {
+    const now = new Date();
+    var target = new Date();
+    target.setMinutes(1);
+    target.setHours(target.getHours() + 1);
+    return target.getTime() - now.getTime();
+}
+
 loadCache();
 setTimeout(() => {
     updateData();
