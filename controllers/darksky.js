@@ -52,7 +52,7 @@ function update(key) {
                 temp: Math.round(weatherData.currently.temperature),
                 icon: weatherData.currently.icon,
                 rainIntensity: weatherData.currently.precipIntensity,
-                windSpeed: weatherData.currently.windSpeed
+                windSpeed: Math.round(weatherData.currently.windSpeed)
             };
             db.insertRecord(year, day, hour, data);
             today = formatPredication(weatherData.hourly);
@@ -86,7 +86,7 @@ function formatPredication(hourly) {
                 temp: Math.round(data.temperature),
                 icon: data.icon,
                 rainIntensity: data.precipIntensity,
-                windSpeed: data.windSpeed
+                windSpeed: Math.round(data.windSpeed)
             };
         });
 }
@@ -108,7 +108,10 @@ function loadCache() {
             console.log("Failed to read yesterday");
             console.error(err);
         } else {
-            cache = yesterdayData;
+            cache = yesterdayData.map((datum) => {
+                datum.windSpeed = Math.round(datum.windSpeed);
+                return datum;
+            });
         }
     });
 
@@ -122,6 +125,7 @@ function loadCache() {
         } else {
             todaysCache = {};
             todayData.forEach((datum) => {
+                datum.windSpeed = Math.round(datum.windSpeed);
                 todaysCache[datum.hour] = datum;
             });
         }
