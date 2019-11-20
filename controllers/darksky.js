@@ -145,7 +145,8 @@ setTimeout(() => {
     updateData();
     setInterval(updateData, 60 * 60 * 1000);  //one hour
     nextUpdate = new Date();
-    nextUpdate.setUTCHours(nextUpdate.getUTCHours() + 1);
+    nextUpdate.setUTCMinutes(nextUpdate.setUTCMinutes() + 60);
+    nextUpdate.setUTCMinutes(1);
 }, refreshIn);
 
 console.log("Updating in " + Math.ceil(refreshIn/1000/60) + " mins")
