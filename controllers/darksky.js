@@ -10,15 +10,19 @@ const LNG = process.env.LONGITUDE;
 
 var cache = [];
 var todaysCache = {};
-var today = {};
+var today = [];
 var lastUpdated = null;
+var nextUpdate = null;
 
 module.exports.getForLatLng = function () {
     return {
         yesterday: cache,
-        todayHistory: todaysCache,
-        todayPrediction: today,
-        lastUpdated: lastUpdated
+        today: {
+            history: Object.values(todaysCache),
+            prediction: today
+        },
+        lastUpdated: lastUpdated,
+        nextUpdateAt: nextUpdate
     };
 }
 
@@ -37,7 +41,12 @@ function update(key) {
             const day = dayOfYear(now);
             const hour = now.getUTCHours();
             const weatherData = JSON.parse(body);
-            fs.writeFile(`${JSON_DIR}/${makeFileName(now)}`, body, () => { });
+            fs.writeFile(`${JSON_DIR}/${makeFileName(now)}`, body, (err) => {
+                if (err) {
+                    console.error(`Failed to write ${makeFileName(now)}`);
+                    console.error(err);
+                }
+             });
             const data = {
                 hour: hour,
                 temp: Math.round(weatherData.currently.temperature),
@@ -46,7 +55,7 @@ function update(key) {
                 windSpeed: weatherData.currently.windSpeed
             };
             db.insertRecord(year, day, hour, data);
-            today.data = formatPredication(weatherData.hourly);
+            today = formatPredication(weatherData.hourly);
             lastUpdated = now;
             todaysCache[hour] = (data);
             if (hour >= 23) {
@@ -111,9 +120,9 @@ function loadCache() {
             console.log("Failed to read today");
             console.error(err);
         } else {
-            todaysData = {};
+            todaysCache = {};
             todayData.forEach((datum) => {
-                todaysData[datum.hour] = datum;
+                todaysCache[datum.hour] = datum;
             });
         }
     });
@@ -122,13 +131,21 @@ function loadCache() {
 function msToNextHour() {
     const now = new Date();
     var target = new Date();
+    target.setUTCSeconds(0);
     target.setUTCMinutes(1);
     target.setUTCHours(target.getUTCHours() + 1);
-    return target.getUTCMilliseconds() - now.getUTCMilliseconds();
+    return target.getTime() - now.getTime();
 }
 
+const refreshIn = msToNextHour();
+nextUpdate = new Date();
+nextUpdate.setUTCMilliseconds(nextUpdate.getUTCMilliseconds() + refreshIn);
 loadCache();
 setTimeout(() => {
     updateData();
     setInterval(updateData, 60 * 60 * 1000);  //one hour
-}, msToNextHour());
+    nextUpdate = new Date();
+    nextUpdate.setUTCHours(nextUpdate.getUTCHours() + 1);
+}, refreshIn);
+
+console.log("Updating in " + Math.ceil(refreshIn/1000/60) + " mins")
