@@ -24,9 +24,9 @@ const DB = new sqlite.Database(DB_FILE, (err) => {
 });
 
 module.exports.insertRecord = function(year, day, hour, data) {
-  DB.run("REPLACE INTO weather (year, day, hour, temp, icon, rain, windSpeed) VALUES (?,?,?,?,?,?,?)", [year, day, hour, data.temp, data.icon, data.rain, data.windSpeed], (err) => {
+  DB.run("REPLACE INTO weather (year, day, hour, temp, icon, rain, windSpeed) VALUES (?,?,?,?,?,?,?)", [year, day, hour, data.temp, data.icon, data.rainIntensity, data.windSpeed], (err) => {
     if (err) {
-      console.log(`Error writing (${year}, ${day}, ${hour}, ${data.temp}, ${data.icon}, ${data.rain}, ${data.windSpeed}): ${err}`);
+      console.log(`Error writing (${year}, ${day}, ${hour}, ${data.temp}, ${data.icon}, ${data.rainIntensity}, ${data.windSpeed}): ${err}`);
     }
   });
 };
@@ -41,7 +41,7 @@ module.exports.getDay = function(year, day, callback) {
           hour: row.hour,
           temp: row.temp,
           icon: row.icon,
-          rain: row.rain == 1,
+          rainIntensity: row.rain,
           windSpeed: row.windSpeed
         };
       }));

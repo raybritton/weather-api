@@ -51,7 +51,7 @@ function update(key) {
                 hour: hour,
                 temp: Math.round(weatherData.currently.temperature),
                 icon: weatherData.currently.icon,
-                rain: weatherData.currently.precipIntensity,
+                rainIntensity: weatherData.currently.precipIntensity,
                 windSpeed: weatherData.currently.windSpeed
             };
             db.insertRecord(year, day, hour, data);
