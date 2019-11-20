@@ -141,6 +141,7 @@ const refreshIn = msToNextHour();
 nextUpdate = new Date();
 nextUpdate.setUTCMilliseconds(nextUpdate.getUTCMilliseconds() + refreshIn);
 loadCache();
+updateData();
 setTimeout(() => {
     updateData();
     setInterval(updateData, 60 * 60 * 1000);  //one hour
