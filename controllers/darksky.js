@@ -62,6 +62,9 @@ function update(key) {
                 cache = todaysCache;
                 todaysCache = [];
             }
+            nextUpdate = new Date();
+        nextUpdate.setUTCMinutes(nextUpdate.getUTCMinutes() + 60);
+        nextUpdate.setUTCMinutes(1);
         }
     });
 }
@@ -143,15 +146,12 @@ function msToNextHour() {
 
 const refreshIn = msToNextHour();
 nextUpdate = new Date();
-nextUpdate.setUTCMilliseconds(nextUpdate.getUTCMilliseconds() + refreshIn);
+nextUpdate.setTime(nextUpdate.getTime() + refreshIn);
 loadCache();
 updateData();
 setTimeout(() => {
     updateData();
     setInterval(updateData, 60 * 60 * 1000);  //one hour
-    nextUpdate = new Date();
-    nextUpdate.setUTCMinutes(nextUpdate.setUTCMinutes() + 60);
-    nextUpdate.setUTCMinutes(1);
 }, refreshIn);
 
 console.log("Updating in " + Math.ceil(refreshIn/1000/60) + " mins")
