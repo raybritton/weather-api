@@ -10,7 +10,7 @@ const LNG = process.env.LONGITUDE;
 
 var cache = [];
 var todaysCache = {};
-var today = [];
+var todayPrediction = [];
 var lastUpdated = null;
 var nextUpdate = null;
 
@@ -19,7 +19,7 @@ module.exports.getForLatLng = function () {
         yesterday: cache,
         today: {
             history: Object.values(todaysCache),
-            prediction: today
+            prediction: todayPrediction
         },
         lastUpdated: lastUpdated,
         nextUpdateAt: nextUpdate
@@ -55,7 +55,7 @@ function update(key) {
                 windSpeed: Math.round(weatherData.currently.windSpeed)
             };
             db.insertRecord(year, day, hour, data);
-            today = formatPredication(weatherData.hourly);
+            todayPrediction = formatPredication(weatherData.hourly);
             lastUpdated = now;
             todaysCache[hour] = (data);
             if (hour >= 23) {

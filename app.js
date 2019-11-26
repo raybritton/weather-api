@@ -3,13 +3,35 @@ require('dotenv').config();
 const util = require('util');
 const sprintf = require('sprintf-js').sprintf;
 const express = require('express');
+const hbs = require('express-hbs');
 const app = express();
+const darksky = require("./controllers/darksky");
 
 global.SERVER_HOST = process.env.HOSTNAME || 'localhost';
 global.SERVER_PORT = process.env.PORT || '3001';
 
+app.engine('hbs', hbs.express4({
+	partialsDir: __dirname + '/views/partials',
+	defaultLayout: __dirname + '/views/layout.hbs'
+}));
+app.set('view engine', 'hbs');
+app.set('views', __dirname + '/views');
+app.use(express.static('public'));
+require("./hbs-ext").setup(hbs);
+
 app.get("/alive", (req, res) => {
     res.sendStatus(500);
+});
+
+app.use("/weather", (req, res) => {
+    const data = darksky.getForLatLng();
+    const todayPast = data.today.history;
+    const todayFuture = data.today.prediction.slice(1);
+    res.render('weather', {
+        title: "Weather",
+        today: JSON.stringify(todayPast.concat(todayFuture).map((hour) => hour.temp)),
+        yesterday: JSON.stringify(data.yesterday.map((hour) => hour.temp))
+    });
 });
 
 app.use("/", require("./routes/api"));
