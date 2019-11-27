@@ -59,7 +59,7 @@ function update(key) {
             lastUpdated = now;
             todaysCache[hour] = (data);
             if (hour >= 23) {
-                cache = todaysCache;
+                cache = Object.values(todaysCache);
                 todaysCache = [];
             }
             nextUpdate = new Date();
