@@ -35,7 +35,10 @@ app.use("/weather", basicAuth({
             title: "Weather",
             today: JSON.stringify(data.todaySimple.map((hour) => hour.temp)),
             yesterday: JSON.stringify(data.yesterday.map((hour) => hour.temp)),
-            tomorrow: JSON.stringify(data.tomorrow.map((hour) => hour.temp))
+            tomorrow: JSON.stringify(data.tomorrow.map((hour) => hour.temp)),
+            todayRain: JSON.stringify(data.todaySimple.map((hour) => hour.rainIntensity > 0.1)),
+            yesterdayRain: JSON.stringify(data.yesterday.map((hour) => hour.rainIntensity > 0.1)),
+            tomorrowRain: JSON.stringify(data.tomorrow.map((hour) => hour.rainIntensity > 0.1))
         });
     });
 

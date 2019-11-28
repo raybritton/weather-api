@@ -9,6 +9,21 @@
       width: 100%;
       height: 300px;
     }
+    .weather_indicator_container {
+      width: 100%;
+      height: 16px;
+      display: flex;
+      padding-left: 40px;
+    }
+    .weather_indicator {
+      display: inline-block;
+      width: 4%;
+      height: 100%;
+      background-color: rgb(230,230,230);
+    }
+    .rain {
+      background-color: rgb(80, 80, 200);
+    }
   </style>
 {{/extend}}
 
@@ -17,12 +32,18 @@
     <h1>Weather</h1>
   </header>
   <section >
-    <h3>Today</h3>
-    <div id="today" class="graph ct-perfect-fourth"></div>
     <h3>Yesterday</h3>
     <div id="yesterday" class="graph ct-perfect-fourth"></div>
+    <div class="weather_indicator_container" id="yesterday_indicator"></div>
+
+    <h3>Today</h3>
+    <div id="today" class="graph ct-perfect-fourth"></div>
+    <div class="weather_indicator_container" id="today_indicator">
+    </div>
+    
     <h3>Tomorrow</h3>
     <div id="tomorrow" class="graph ct-perfect-fourth"></div>
+    <div class="weather_indicator_container" id="tomorrow_indicator"></div>
   </section>
 </main>
 
@@ -31,6 +52,10 @@
   const todayTemp = {{{today}}};
   const yesterdayTemp = {{{yesterday}}};
   const tomorrowTemp = {{{tomorrow}}};
+
+  const todayRain = {{{todayRain}}};
+  const yesterdayRain = {{{yesterdayRain}}};
+  const tomorrowRain = {{{tomorrowRain}}};
 
   const options = {
     axisY: {
@@ -73,6 +98,36 @@
     new Chartist.Line('#today', todayData, options);
     new Chartist.Line('#yesterday', yesterdayData, options);
     new Chartist.Line('#tomorrow', tomorrowData, options);
+
+    var todayIndicator = document.getElementById("today_indicator");
+    for (var isRain of todayRain) {
+      var div = document.createElement('div');
+      div.classList.add("weather_indicator");
+      if (isRain) {
+        div.classList.add("rain");
+      }
+      todayIndicator.appendChild(div);
+    }
+
+    var yesterdayIndicator = document.getElementById("yesterday_indicator");
+    for (var isRain of yesterdayRain) {
+      var div = document.createElement('div');
+      div.classList.add("weather_indicator");
+      if (isRain) {
+        div.classList.add("rain");
+      }
+      yesterdayIndicator.appendChild(div);
+    }
+
+    var tomorrowIndicator = document.getElementById("tomorrow_indicator");
+    for (var isRain of tomorrowRain) {
+      var div = document.createElement('div');
+      div.classList.add("weather_indicator");
+      if (isRain) {
+        div.classList.add("rain");
+      }
+      tomorrowIndicator.appendChild(div);
+    }
   })();
 </script>
 {{/extend}}
