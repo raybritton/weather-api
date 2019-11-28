@@ -11,6 +11,7 @@ const LNG = process.env.LONGITUDE;
 var cache = [];
 var todaysCache = {};
 var todayPrediction = [];
+var tomorrowPrediction = [];
 var lastUpdated = null;
 var nextUpdate = null;
 
@@ -21,6 +22,8 @@ module.exports.getForLatLng = function () {
             history: Object.values(todaysCache),
             prediction: todayPrediction
         },
+        todaySimple: Object.values(todaysCache).concat(todayPrediction.slice(1)),
+        tomorrow: tomorrowPrediction,
         lastUpdated: lastUpdated,
         nextUpdateAt: nextUpdate
     };
@@ -55,7 +58,8 @@ function update(key) {
                 windSpeed: Math.round(weatherData.currently.windSpeed)
             };
             db.insertRecord(year, day, hour, data);
-            todayPrediction = formatPredication(weatherData.hourly);
+            todayPrediction = formatPredication(weatherData.hourly, false);
+            tomorrowPrediction = formatPredication(weatherData.hourly, true);
             lastUpdated = now;
             todaysCache[hour] = (data);
             if (hour >= 23) {
@@ -73,8 +77,11 @@ function makeFileName(date) {
     return `${date.getUTCFullYear()}_${date.getUTCMonth()}_${date.getUTCDate()}_${date.getUTCHours()}.json`
 }
 
-function formatPredication(hourly) {
+function formatPredication(hourly, tomorrow) {
     const now = new Date();
+    if (tomorrow) {
+        now.setUTCDate(now.getUTCDate() + 1);
+    }
     const year = now.getUTCFullYear();
     const day = dayOfYear(now);
     return hourly.data

@@ -21,6 +21,8 @@
     <div id="today" class="graph ct-perfect-fourth"></div>
     <h3>Yesterday</h3>
     <div id="yesterday" class="graph ct-perfect-fourth"></div>
+    <h3>Tomorrow</h3>
+    <div id="tomorrow" class="graph ct-perfect-fourth"></div>
   </section>
 </main>
 
@@ -28,6 +30,7 @@
 <script>
   const todayTemp = {{{today}}};
   const yesterdayTemp = {{{yesterday}}};
+  const tomorrowTemp = {{{tomorrow}}};
 
   const options = {
     axisY: {
@@ -54,12 +57,22 @@
     ]
   };
 
+  const tomorrowData = {
+    // A labels array that can contain any sort of values
+    labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+    // Our series array that contains series objects or in this case series data arrays
+    series: [
+      tomorrowTemp
+    ]
+  };
+
   (function() {
-    options.axisY.low = Math.min(...todayTemp.concat(yesterdayTemp)),
-    options.axisY.high = Math.max(...todayTemp.concat(yesterdayTemp))
+    options.axisY.low = Math.min(...todayTemp.concat(yesterdayTemp).concat(tomorrowTemp)),
+    options.axisY.high = Math.max(...todayTemp.concat(yesterdayTemp).concat(tomorrowTemp))
 
     new Chartist.Line('#today', todayData, options);
     new Chartist.Line('#yesterday', yesterdayData, options);
+    new Chartist.Line('#tomorrow', tomorrowData, options);
   })();
 </script>
 {{/extend}}

@@ -31,12 +31,11 @@ app.use("/weather", basicAuth({
 }),
     (req, res) => {
         const data = darksky.getForLatLng();
-        const todayPast = data.today.history;
-        const todayFuture = data.today.prediction.slice(1);
         res.render('weather', {
             title: "Weather",
-            today: JSON.stringify(todayPast.concat(todayFuture).map((hour) => hour.temp)),
-            yesterday: JSON.stringify(data.yesterday.map((hour) => hour.temp))
+            today: JSON.stringify(data.todaySimple.map((hour) => hour.temp)),
+            yesterday: JSON.stringify(data.yesterday.map((hour) => hour.temp)),
+            tomorrow: JSON.stringify(data.tomorrow.map((hour) => hour.temp))
         });
     });
 
