@@ -21,7 +21,7 @@ router.get("/reload", (req, res) => {
   }
 });
 
-router.get('/v1/weather', validateApikey, (req, res) => {
+router.get('/v2/weather', validateApikey, (req, res) => {
   const data = darksky.getForLatLng();
 
   const updateAt = new Date(data.nextUpdateAt);
@@ -31,14 +31,15 @@ router.get('/v1/weather', validateApikey, (req, res) => {
 
   res
     .header("Cache-Control", "public, max-age=" + seconds)
-    .header("Expires", updateAt.toGMTString())
+    .header("Expires", updateAt.toISOString())
     .header("Last-Modified", new Date(data.lastUpdated).toGMTString())
     .send(data);
 });
 
-function printForHeader(datetime) {
-
-}
+router.get('/v1/weather', validateApikey, (req, res) => {
+  const data = darksky.getForLatLng();
+  res.send(data);
+});
 
 function loadConfig() {
   config = JSON.parse(fs.readFileSync(process.env.CONFIG).toString());
