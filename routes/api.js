@@ -31,7 +31,7 @@ router.get('/v2/weather', validateApikey, (req, res) => {
 
   res
     .header("Cache-Control", "public, max-age=" + seconds)
-    .header("Expires", updateAt.toISOString())
+    .header("Expires", updateAt.toGMTString())
     .header("Last-Modified", new Date(data.lastUpdated).toGMTString())
     .send(data);
 });
