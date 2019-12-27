@@ -21,7 +21,7 @@ app.use(express.static('public'));
 require("./hbs-ext").setup(hbs);
 
 app.get("/alive", (req, res) => {
-    res.sendStatus(500);
+    res.sendStatus(200);
 });
 
 app.use("/weather", basicAuth({
