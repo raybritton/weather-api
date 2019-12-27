@@ -21,6 +21,21 @@ router.get("/reload", (req, res) => {
   }
 });
 
+router.get('/v2/weather', validateApikey, (req, res) => {
+  const data = darksky.getForLatLng();
+
+  const updateAt = new Date(data.nextUpdateAt);
+  updateAt.setMinutes(updateAt.getMinutes() + 1);
+
+  const seconds = (new Date().getTime() - updateAt.getTime()) / 1000
+
+  res
+    .header("Cache-Control", "public, max-age=" + seconds)
+    .header("Expires", updateAt.toGMTString())
+    .header("Last-Modified", new Date(data.lastUpdated).toGMTString())
+    .send(data);
+});
+
 router.get('/v1/weather', validateApikey, (req, res) => {
   const data = darksky.getForLatLng();
   res.send(data);
