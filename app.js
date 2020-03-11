@@ -17,7 +17,7 @@ if (LOG) {
     const opts = {
         errorEventName:'error',
             logDirectory: LOG, // NOTE: folder must exist and be writable...
-            fileNamePattern:'status-api-<DATE>.log',
+            fileNamePattern:'weather-<DATE>.log',
             dateFormat:'YYYY.MM.DD'
     };
     GLOBAL.LOGGER = require('simple-node-logger').createRollingFileLogger( opts );
