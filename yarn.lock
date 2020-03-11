@@ -459,6 +459,11 @@ express-hbs@^2.3.0:
     lodash "4.17.15"
     readdirp "2.2.1"
 
+express-rate-limit@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-5.1.1.tgz#572e75c47ef890a6c9a3347f27bf3557d571f9ed"
+  integrity sha512-puA1zcCx/quwWUOU6pT6daCt6t7SweD9wKChKhb+KSgFMKRwS81C224hiSAUANw/gnSHiwEhgozM/2ezEBZPeA==
+
 express@^4.17.1:
   version "4.17.1"
   resolved "https://registry.yarnpkg.com/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"
@@ -1005,7 +1010,7 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
   integrity sha512-s5kLOcnH0XqDO+FvuaLX8DDjZ18CGFk7VygH40QoKPUQhW4e2rvM0rwUq0t8IQDOwYSeLK01U90OjzBTme2QqA==
 
-lodash@4.17.15:
+lodash@4.17.15, lodash@^4.17.12:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
@@ -1132,6 +1137,11 @@ mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
   integrity sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=
   dependencies:
     minimist "0.0.8"
+
+moment@^2.20.1:
+  version "2.24.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
+  integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
 
 ms@2.0.0:
   version "2.0.0"
@@ -1590,6 +1600,14 @@ signal-exit@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
   integrity sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=
+
+simple-node-logger@^18.12.24:
+  version "18.12.24"
+  resolved "https://registry.yarnpkg.com/simple-node-logger/-/simple-node-logger-18.12.24.tgz#d1961b83cf3302a2c2a7b292e736b1601d838b4e"
+  integrity sha512-4dTqpYecHsvPjWo+i+J3pLty8WJDNbxOVesNj5ch8pYH95LIGAFH4dxMSqyf+Os0RTchXifEtI/mfm3AVJftmg==
+  dependencies:
+    lodash "^4.17.12"
+    moment "^2.20.1"
 
 snapdragon-node@^2.0.1:
   version "2.1.1"

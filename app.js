@@ -6,10 +6,34 @@ const express = require('express');
 const hbs = require('express-hbs');
 const app = express();
 const darksky = require("./controllers/darksky");
-const basicAuth = require('express-basic-auth')
+const basicAuth = require('express-basic-auth');
+const rateLimit = require("express-rate-limit");
 
 global.SERVER_HOST = process.env.HOSTNAME || 'localhost';
 global.SERVER_PORT = process.env.PORT || '3001';
+global.LOG = process.env.LOG_DIR;
+
+if (LOG) {
+    const opts = {
+        errorEventName:'error',
+            logDirectory: LOG, // NOTE: folder must exist and be writable...
+            fileNamePattern:'status-api-<DATE>.log',
+            dateFormat:'YYYY.MM.DD'
+    };
+    GLOBAL.LOGGER = require('simple-node-logger').createRollingFileLogger( opts );
+}
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 100,
+    onLimitReached: function(req, res, options) {
+        if (LOG) {
+            LOGGER.warn("Rate limited " + req.ip);
+        }
+    }
+});
+
+app.use(limiter);
 
 app.engine('hbs', hbs.express4({
     partialsDir: __dirname + '/views/partials',

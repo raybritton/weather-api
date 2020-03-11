@@ -6,7 +6,7 @@
   "license": "Apache 2.0",
   "private": true,
   "engines": {
-    "node": "8.13.0"
+    "node": "10.18.1"
   },
   "scripts": {
     "start": "node app.js"
@@ -16,8 +16,10 @@
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
     "express-hbs": "^2.3.0",
+    "express-rate-limit": "^5.1.1",
     "hbs": "^4.0.6",
     "request": "^2.88.0",
+    "simple-node-logger": "^18.12.24",
     "sprintf-js": "^1.1.2",
     "sqlite3": "^4.1.0"
   }
