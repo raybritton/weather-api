@@ -1,3 +1,9 @@
+## Deprecated
+
+Apple have purchased DarkSky and are closing the API
+
+https://blog.darksky.net/dark-sky-has-a-new-home/
+
 # Weather history API
 Returns the weather for yesterday and the prediction for the rest of today
 
